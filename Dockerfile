@@ -33,11 +33,12 @@ RUN chmod g+rw /home && \
     chown -R theia:theia /home/workspaces;
 
 COPY download_install_firacode.sh /home/theia
+RUN chmod +x /home/theia/download_install_firacode.sh
 
 WORKDIR /home/theia
 USER theia
 
-RUN chmod +x download_install_firacode.sh && bash download_install_firacode.sh
+RUN bash download_install_firacode.sh
 
 ADD package.json ./package.json
 RUN yarn --cache-folder ./ycache && rm -rf ./ycache && \
