@@ -111,7 +111,7 @@ ENV strip=$strip
 
 USER theia
 WORKDIR /home/theia
-ADD $version.package.json ./package.json
+ADD package.json ./package.json
 
 RUN if [ "$strip" = "true" ]; then \
 yarn --pure-lockfile && \
@@ -328,4 +328,4 @@ ENV SHELL=/bin/fish \
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-EXPOSE $POSE
+EXPOSE $PORT
