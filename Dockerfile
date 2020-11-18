@@ -1,7 +1,7 @@
 FROM maven:3.6.3-jdk-11-slim as maven-base
 FROM gradle:jre11 as gradle-base
 
-FROM node:12.19.0-slim 
+FROM node:10-slim 
 
 # Metadata
 LABEL org.label-schema.schema-version = "1.0" \
@@ -23,7 +23,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN ln -s "${MAVEN_HOME}/bin/mvn" /usr/bin/mvn && \
     ln -s "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle && \
     apt-get update && \
-    apt-get install -y python build-essential gnupg git nano curl apt-transport-https unzip wget fish && \
+    apt-get install -y python apt-utils build-essential gnupg git nano curl apt-transport-https unzip wget fish fonts-firecode&& \
     rm -rf /var/lib/apt/lists/*
 
 RUN adduser --disabled-password --gecos '' theia
