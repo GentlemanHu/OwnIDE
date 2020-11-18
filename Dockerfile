@@ -23,7 +23,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN ln -s "${MAVEN_HOME}/bin/mvn" /usr/bin/mvn && \
     ln -s "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle && \
     apt-get update && \
-    apt-get install -y python apt-utils build-essential gnupg git nano curl apt-transport-https unzip wget fish fonts-firacode && \
+    apt-get install -y python apt-utils build-essential gnupg git nano curl apt-transport-https unzip wget fish && \
     rm -rf /var/lib/apt/lists/*
 
 RUN adduser --disabled-password --gecos '' theia
@@ -31,8 +31,13 @@ RUN chmod g+rw /home && \
     mkdir -p /home/workspaces && \
     chown -R theia:theia /home/theia && \
     chown -R theia:theia /home/workspaces;
+
+COPY download_install_firacode.sh /home/theia
+
 WORKDIR /home/theia
 USER theia
+
+RUN chmod +x download_install_firacode.sh && bash download_install_firacode.sh
 
 ADD package.json ./package.json
 RUN yarn --cache-folder ./ycache && rm -rf ./ycache && \
