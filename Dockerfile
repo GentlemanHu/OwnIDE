@@ -2,7 +2,7 @@ ARG NODE_VERSION=12
 FROM node:$NODE_VERSION as theia-builder
 ARG version=latest
 WORKDIR /home/theia
-ADD $version.package.json ./package.json
+ADD package.json ./package.json
 ARG GITHUB_TOKEN
 RUN yarn --pure-lockfile && \
     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
