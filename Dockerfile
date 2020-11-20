@@ -1,10 +1,3 @@
-# Metadata
-LABEL org.label-schema.schema-version = "1.0" \
-      org.label-schema.name="GodLin's IDE" \
-      org.label-schema.description="A Docker image containing the theia-ide for Java development By Gentleman.Hu" \
-      org.label-schema.vcs-url="https://github.com/gentlemanhu/OwnIDE" \
-      org.label-schema.version="1.0.0"
-
 ARG NODE_VERSION=12
 FROM node:$NODE_VERSION as theia-builder
 ARG version=latest
@@ -21,7 +14,6 @@ RUN yarn --pure-lockfile && \
     echo *.spec.* >> .yarnclean && \
     yarn autoclean --force && \
     yarn cache clean
-
 
 FROM google/dart
 
