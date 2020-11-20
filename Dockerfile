@@ -114,6 +114,7 @@ WORKDIR /home/theia
 ADD $version.package.json ./package.json
 
 RUN if [ "$strip" = "true" ]; then \
+npm install filenamify \
 yarn --pure-lockfile && \
     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
     yarn theia download:plugins && \
