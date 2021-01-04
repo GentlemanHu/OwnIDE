@@ -36,7 +36,7 @@ jobs:
         heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
         heroku_email: ${{secrets.HEROKU_EAMIL}}
         justlogin: true
-      run: |
+    - run: |
         docker login --username=_ --password=$(heroku auth:token) registry.heroku.com
         docker tag gentlemanhu/theia:${{ env.VERSION }} registry.heroku.com/${{secrets.HEROKU_APP_NAME}}/web
         docker push registry.heroku.com/${{secrets.HEROKU_APP_NAME}}/web
