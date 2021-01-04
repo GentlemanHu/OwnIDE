@@ -27,4 +27,16 @@ jobs:
     - name: Push the versioned Docker image
       run: docker push gentlemanhu/theia:${{ env.VERSION }}
     - name: Push the latest Docker image
-      run: docker push gentlemanhu/theia:latest  
+      run: docker push gentlemanhu/theia:latest
+
+    - name: Log in Heroku And push 
+      - uses: akhileshns/heroku-deploy@v3.8.8 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EAMIL}}
+          justlogin: true
+      - run: |
+          docker login --username=_ --password=$(heroku auth:token) registry.heroku.com
+          docker tag gentlemanhu/theia:${{ env.VERSION }} registry.heroku.com/${{secrets.HEROKU_APP_NAME}}/web
+          docker push registry.heroku.com/${{secrets.HEROKU_APP_NAME}}/web
