@@ -152,9 +152,9 @@
         "tabnine-vscode": "https://github.com/codota/tabnine-vscode/releases/download/v3.1.10/tabnine-vscode.vsix",
         "prettier-vscode": "https://github.com/prettier/prettier-vscode/releases/download/v5.7.2/prettier-vscode-5.7.2.vsix",
         "vscode-auto-rename-tag": "https://cdn.jsdelivr.net/gh/gentlemanhu/public-store@master/vscode_ext/formulahendry.auto-rename-tag-0.1.5.vsix",
-        "plantuml": "https://open-vsx.org/api/jebbs/plantuml/2.13.12/file/jebbs.plantuml-2.13.12.vsix",
+        "plantuml": "https://cdn.jsdelivr.net/gh/GentlemanHu/public-store@master/vscode_ext/jebbs.plantuml-2.14.2.vsix",
         "yangster": "https://open-vsx.org/api/typefox/yang-vscode/2.0.3/file/typefox.yang-vscode-2.0.3.vsix",
-        "just-black": "https://open-vsx.org/api/nerosiar/just-black/3.0.1/file/nerosiar.just-black-3.0.1.vsix"
+        "just-black": "https://cdn.jsdelivr.net/gh/GentlemanHu/public-store@master/vscode_ext/nur.just-black-3.0.0.vsix"
     },
     "devDependencies": {
         "@theia/cli": "next"
