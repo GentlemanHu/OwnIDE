@@ -108,6 +108,7 @@ WORKDIR /home/theia
 ADD $version.package.json ./package.json
 
 RUN if [ "$strip" = "true" ]; then \
+npm install filenamify \
 yarn --pure-lockfile && \
     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
     yarn theia download:plugins && \
@@ -180,7 +181,7 @@ RUN apt-get update && apt-get -y install openjdk-11-jdk maven gradle
 ARG LLVM=12
 
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
-    echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" > /etc/apt/sources.list.d/llvm.list && \
+    echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main" > /etc/apt/sources.list.d/llvm.list && \
     apt-get update && \
     apt-get install -y \
                        clang-tools-$LLVM \
