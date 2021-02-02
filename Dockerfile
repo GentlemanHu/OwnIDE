@@ -240,7 +240,7 @@ RUN apt-get update -y \
     && add-apt-repository universe \
     && apt-get install -y python3.8 python3-dev python3-pip \
     && python3.8 -m pip install --upgrade pip --user \
-    && pip3 install python-language-server flake8 autopep8 -y \
+    && pip3 install python-language-server flake8 autopep8 \
     && apt install snapd -y \
     && apt-get remove -y software-properties-common \
 
