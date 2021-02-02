@@ -244,8 +244,8 @@ RUN apt-get update -y \
     && apt install snapd -y \
     && apt-get remove -y software-properties-common 
 
-# Kotlin
-RUN snap install --classic kotlin
+# # Kotlin
+# RUN snap install --classic kotlin
 
 # Ruby
 RUN apt-get update && apt-get -y install fonts-firacode ruby ruby-dev zlib1g-dev && \
