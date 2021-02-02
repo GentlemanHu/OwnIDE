@@ -205,19 +205,6 @@ RUN wget "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cma
     ./cmake-$CMAKE_VERSION-Linux-x86_64.sh --prefix=/usr/ --skip-license && \
     rm cmake-$CMAKE_VERSION-Linux-x86_64.sh
 
-# Python 3
-RUN apt-get update \
-    && add-apt-repository universe \
-    && apt-get install -y software-properties-common \
-    && apt-get install -y python3.8 python3-dev python3-pip \
-    && apt-get remove -y software-properties-common \
-    && python3.8 -m pip install --upgrade pip --user \
-    && pip3 install python-language-server flake8 autopep8 \
-    && apt install snapd
-
-# Kotlin
-RUN snap install --classic kotlin
-
 # .NET Core SDK
 ARG DOTNET_VERSION=3.1
 # Disables .NET telemetry
@@ -245,6 +232,20 @@ xdebug.remote_autostart = 1' >> /etc/php/$PHP_VERSION/mods-available/xdebug.ini
 RUN curl -s -o composer-setup.php https://getcomposer.org/installer \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && rm composer-setup.php
+
+
+# Python 3
+RUN apt-get update \
+    && add-apt-repository universe \
+    && apt-get install -y software-properties-common \
+    && apt-get install -y python3.8 python3-dev python3-pip \
+    && apt-get remove -y software-properties-common \
+    && python3.8 -m pip install --upgrade pip --user \
+    && pip3 install python-language-server flake8 autopep8 \
+    && apt install snapd
+
+# Kotlin
+RUN snap install --classic kotlin
 
 # Ruby
 RUN apt-get update && apt-get -y install fonts-firacode ruby ruby-dev zlib1g-dev && \
