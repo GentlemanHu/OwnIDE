@@ -242,7 +242,7 @@ RUN apt-get update -y \
     && python3.8 -m pip install --upgrade pip --user \
     && pip3 install python-language-server flake8 autopep8 \
     && apt install snapd -y \
-    && apt-get remove -y software-properties-common \
+    && apt-get remove -y software-properties-common 
 
 # Kotlin
 RUN snap install --classic kotlin
