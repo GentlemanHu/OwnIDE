@@ -225,7 +225,7 @@ RUN apt-get update \
     && apt-get install -y software-properties-common \
     && add-apt-repository -y ppa:ondrej/php \
     && apt-get install -y curl php$PHP_VERSION php$PHP_VERSION-cli php$PHP_VERSION-mbstring unzip php$PHP_VERSION-common php$PHP_VERSION-json php-yaml php-xdebug 
-    
+
 RUN echo '[XDebug]\n\
 xdebug.remote_enable = 1\n\
 xdebug.remote_autostart = 1' >> /etc/php/$PHP_VERSION/mods-available/xdebug.ini
@@ -235,17 +235,17 @@ RUN curl -s -o composer-setup.php https://getcomposer.org/installer \
 
 
 # Python 3
-RUN apt-get update \
+RUN apt-get update -y \
     && apt-get install -y software-properties-common \
     && add-apt-repository universe \
     && apt-get install -y python3.8 python3-dev python3-pip \
     && python3.8 -m pip install --upgrade pip --user \
-    && pip3 install python-language-server flake8 autopep8 \
-    && apt install snapd \
+    && pip3 install python-language-server flake8 autopep8 -y \
+    && apt install snapd -y \
     && apt-get remove -y software-properties-common \
 
 # Kotlin
-RUN snap install --classic kotlin
+RUN snap install --classic kotlin -y
 
 # Ruby
 RUN apt-get update && apt-get -y install fonts-firacode ruby ruby-dev zlib1g-dev && \
