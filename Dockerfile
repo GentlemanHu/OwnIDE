@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as common
+FROM ubuntu:20.04 as common
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -241,8 +241,7 @@ RUN apt-get update -y \
     && apt-get install -y python3.8 python3-dev python3-pip \
     && python3.8 -m pip install --upgrade pip --user \
     && pip3 install python-language-server flake8 autopep8 \
-    && apt install snapd -y \
-    && apt-get remove -y software-properties-common 
+    && apt install snapd -y 
 
 # # Kotlin
 # RUN snap install --classic kotlin
@@ -284,7 +283,8 @@ RUN \
   curl https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_testing.list > /etc/apt/sources.list.d/dart_testing.list && \
   curl https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_unstable.list > /etc/apt/sources.list.d/dart_unstable.list && \
   apt-get update && \
-  apt-get install dart=$DART_VERSION-1
+  apt-get install dart=$DART_VERSION-1 \
+  && apt-get remove -y software-properties-common 
 
 ENV DART_SDK /usr/lib/dart
 ENV PATH $DART_SDK/bin:/theia/.pub-cache/bin:$PATH
