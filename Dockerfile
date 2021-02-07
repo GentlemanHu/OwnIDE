@@ -250,29 +250,38 @@ RUN apt-get update -y \
 RUN apt-get update && apt-get -y install fonts-firacode ruby ruby-dev zlib1g-dev && \
     gem install solargraph
 
+# # Swift
+# ARG SWIFT_VERSION=5.2.4
+
+# RUN apt-get update \
+#     && apt-get install -y binutils libc6-dev libcurl4 libedit2 libgcc-5-dev libpython2.7 libsqlite3-0 libstdc++-5-dev libxml2 pkg-config tzdata zlib1g-dev \
+#     && curl -SLO https://swift.org/builds/swift-$SWIFT_VERSION-release/ubuntu1804/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz \
+#     && curl -SLO https://swift.org/builds/swift-$SWIFT_VERSION-release/ubuntu1804/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
+#     && wget -q -O - https://swift.org/keys/all-keys.asc | gpg --import - \
+#     && (    gpg --keyserver pool.sks-keyservers.net --refresh-keys Swift \
+#          || gpg --keyserver ipv4.pool.sks-keyservers.net --refresh-keys Swift \
+#          || gpg --keyserver pool.sks-keyservers.net --refresh-keys Swift \
+#          || gpg --keyserver pgp.mit.edu --refresh-keys Swift \
+#          || gpg --keyserver keyserver.pgp.com --refresh-keys Swift \
+#          || gpg --keyserver ha.pool.sks-keyservers.net --refresh-keys Swift \
+#        ) \
+#     && gpg --verify swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
+#     && tar fxz swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz \
+#     && rm swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
+#     && mv swift-$SWIFT_VERSION-RELEASE-ubuntu18.04 /usr/local/swift \
+#     && ln -s /usr/local/swift/usr/bin/swift* /usr/bin \
+#     && ln -s /usr/local/swift/usr/bin/lldb* /usr/bin \
+#     && ln -s /usr/local/swift/usr/bin/sourcekit-lsp /usr/bin
+
 # Swift
-ARG SWIFT_VERSION=5.2.4
 
-RUN apt-get update \
-    && apt-get install -y binutils libc6-dev libcurl4 libedit2 libgcc-5-dev libpython2.7 libsqlite3-0 libstdc++-5-dev libxml2 pkg-config tzdata zlib1g-dev \
-    && curl -SLO https://swift.org/builds/swift-$SWIFT_VERSION-release/ubuntu1804/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz \
-    && curl -SLO https://swift.org/builds/swift-$SWIFT_VERSION-release/ubuntu1804/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
-    && wget -q -O - https://swift.org/keys/all-keys.asc | gpg --import - \
-    && (    gpg --keyserver pool.sks-keyservers.net --refresh-keys Swift \
-         || gpg --keyserver ipv4.pool.sks-keyservers.net --refresh-keys Swift \
-         || gpg --keyserver pool.sks-keyservers.net --refresh-keys Swift \
-         || gpg --keyserver pgp.mit.edu --refresh-keys Swift \
-         || gpg --keyserver keyserver.pgp.com --refresh-keys Swift \
-         || gpg --keyserver ha.pool.sks-keyservers.net --refresh-keys Swift \
-       ) \
-    && gpg --verify swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
-    && tar fxz swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz \
-    && rm swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
-    && mv swift-$SWIFT_VERSION-RELEASE-ubuntu18.04 /usr/local/swift \
-    && ln -s /usr/local/swift/usr/bin/swift* /usr/bin \
-    && ln -s /usr/local/swift/usr/bin/lldb* /usr/bin \
-    && ln -s /usr/local/swift/usr/bin/sourcekit-lsp /usr/bin
-
+RUN \
+  apt install clang libpython2.7 libpython2.7-dev \
+  && wget https://swift.org/builds/swift-5.3-release/ubuntu2004/swift-5.3-RELEASE/swift-5.3-RELEASE-ubuntu20.04.tar.gz \ 
+  && tar xzf swift-5.3-RELEASE-ubunutu20.04
+  && mv swift-5.3-RELEASE-ubunutu20.04 /usr/share swift
+  && echo "export PATH=/usr/share/swift/usr/bin:$PATH" >> ~/.bashrc \ 
+  
 # Dart
 ENV DART_VERSION 2.9.0
 
