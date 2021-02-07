@@ -276,11 +276,11 @@ RUN apt-get update && apt-get -y install fonts-firacode ruby ruby-dev zlib1g-dev
 # Swift
 
 RUN \
-  apt install clang libpython2.7 libpython2.7-dev && \
+  apt install -y clang libpython2.7 libpython2.7-dev && \
   wget https://swift.org/builds/swift-5.3-release/ubuntu2004/swift-5.3-RELEASE/swift-5.3-RELEASE-ubuntu20.04.tar.gz && \ 
   tar xzf swift-5.3-RELEASE-ubunutu20.04 && \
   mv swift-5.3-RELEASE-ubunutu20.04 /usr/share swift && \
-  echo "export PATH=/usr/share/swift/usr/bin:$PATH" >> ~/.bashrc \ 
+  echo "export PATH=/usr/share/swift/usr/bin:$PATH" >> ~/.bashrc 
   
 # Dart
 ENV DART_VERSION 2.9.0
