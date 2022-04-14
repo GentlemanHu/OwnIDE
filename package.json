@@ -98,8 +98,6 @@
         "material-icon-theme": "https://open-vsx.org/api/PKief/material-icon-theme/4.15.0/file/PKief.material-icon-theme-4.15.0.vsix",
         "vscode-power-mode": "https://open-vsx.org/api/hoovercj/vscode-power-mode/3.0.2/file/hoovercj.vscode-power-mode-3.0.2.vsix",
         "just-black": "https://open-vsx.org/api/nerosiar/just-black/3.0.1/file/nerosiar.just-black-3.0.1.vsix"
-        
-        
     },
     "devDependencies": {
         "@theia/cli": "next"
