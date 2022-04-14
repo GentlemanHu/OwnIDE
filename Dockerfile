@@ -110,8 +110,8 @@ ENV strip=$strip
 
 USER theia
 WORKDIR /home/theia
-ADD $version.package.json ./package.json
-
+# ADD $version.package.json ./package.json
+ADD package.json ./package.json
 RUN if [ "$strip" = "true" ]; then \
 npm install filenamify \
 yarn --pure-lockfile && \
