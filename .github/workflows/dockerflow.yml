@@ -1,27 +1,48 @@
 name: Docker Flow
 
-on: 
-  release:
-    types: [published]
+on:
+  push:
+    branches:
+      - ku
   watch:
+    branches:
+      - ku
     types: [started]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Login to DockerHub Registry
-      run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-    - name: Get the version
-      id: vars
-      run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
-    - name: Build the versioned and the latest Docker image
-      run: docker build . -t gentlemanhu/theia:${{steps.vars.outputs.tag}} -t gentlemanhu/theia:latest
-    - name: Push the versioned Docker image
-      run: docker push gentlemanhu/theia:${{steps.vars.outputs.tag}}
-    - name: Push the latest Docker image
-      run: docker push gentlemanhu/theia:latest  
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Retrieve version
+        run: |
+          echo VERSION=$(echo ${{ github.event.head_commit.id }} | head -c 10) >> $GITHUB_ENV
+      - name: Build the versioned and the latest Docker image
+        run: docker build . -t gentlemanhu/theia:${{ env.VERSION }} -t gentlemanhu/theia:latest
+      - name: Push the versioned Docker image
+        run: docker push gentlemanhu/theia:${{ env.VERSION }}
+      - name: Push the latest Docker image
+        run: docker push gentlemanhu/theia:latest
+
+      - name: Log in Heroku And push
+        uses: akhileshns/heroku-deploy@v3.8.8 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EAMIL}}
+          justlogin: true
+      - run: |
+          docker login --username=_ --password=$(heroku auth:token) registry.heroku.com
+          docker tag gentlemanhu/theia:${{ env.VERSION }} registry.heroku.com/${{secrets.HEROKU_APP_NAME}}/web
+          docker push registry.heroku.com/${{secrets.HEROKU_APP_NAME}}/web
+      - name: push to tecent dockerHub
+        run: |
+          docker login --username=${{ secrets.TECENT_DOCKER_USERID }} --password=${{ secrets.TECENT_DOCKER_PASSWORD }} ccr.ccs.tencentyun.com
+          docker tag gentlemanhu/theia:${{ env.VERSION }} ccr.ccs.tencentyun.com/ownhub/ownhub:${{ env.VERSION }}
+          docker push ccr.ccs.tencentyun.com/ownhub/ownhub:${{ env.VERSION }}
+          docker tag gentlemanhu/theia:latest ccr.ccs.tencentyun.com/ownhub/ownhub:latest
+          docker push ccr.ccs.tencentyun.com/ownhub/ownhub:latest

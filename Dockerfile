@@ -1,5 +1,4 @@
-
-FROM ubuntu:18.04 as common
+FROM ubuntu:20.04 as common
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -7,12 +6,6 @@ ARG NODE_VERSION=12.18.3
 ENV NODE_VERSION $NODE_VERSION
 ENV YARN_VERSION 1.22.5
 
-# Metadata
-LABEL org.label-schema.schema-version = "1.0" \
-      org.label-schema.name="GodLin's IDE" \
-      org.label-schema.description="A Docker image containing the theia-ide for Java development By Gentleman.Hu" \
-      org.label-schema.vcs-url="https://github.com/gentlemanhu/OwnIDE" \
-      org.label-schema.version="1.0.0"
 # Common deps
 RUN apt-get update && \
     apt-get -y install build-essential \
@@ -24,6 +17,8 @@ RUN apt-get update && \
                        xz-utils \
                        sudo \
                        libsecret-1-dev \
+                       fish \
+
     && \
     apt-get clean && \
     apt-get autoremove -y && \
@@ -201,7 +196,7 @@ RUN apt-get update && \
     apt-get remove -y software-properties-common
 
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
-    echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" > /etc/apt/sources.list.d/llvm.list && \
+    echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main" > /etc/apt/sources.list.d/llvm.list && \
     apt-get update && \
     apt-get install -y \
                        clang-tools-$LLVM \
@@ -225,17 +220,6 @@ RUN wget "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cma
     ./cmake-$CMAKE_VERSION-Linux-x86_64.sh --prefix=/usr/ --skip-license && \
     rm cmake-$CMAKE_VERSION-Linux-x86_64.sh
 
-# Python 2-3
-RUN apt-get update \
-    && apt-get install -y software-properties-common \
-    && add-apt-repository -y ppa:deadsnakes/ppa \
-    && apt-get install -y python-dev python-pip \
-    && apt-get install -y python3.8 python3-dev python3-pip \
-    && apt-get remove -y software-properties-common \
-    && python -m pip install --upgrade pip --user \
-    && python3.8 -m pip install --upgrade pip --user \
-    && pip3 install python-language-server flake8 autopep8
-
 # .NET Core SDK
 ARG DOTNET_VERSION=3.1
 # Disables .NET telemetry
@@ -255,8 +239,8 @@ ARG PHP_VERSION=7.4
 RUN apt-get update \
     && apt-get install -y software-properties-common \
     && add-apt-repository -y ppa:ondrej/php \
-    && apt-get install -y curl php$PHP_VERSION php$PHP_VERSION-cli php$PHP_VERSION-mbstring unzip php$PHP_VERSION-common php$PHP_VERSION-json php-yaml php-xdebug \
-    && apt-get remove -y software-properties-common
+    && apt-get install -y curl php$PHP_VERSION php$PHP_VERSION-cli php$PHP_VERSION-mbstring unzip php$PHP_VERSION-common php$PHP_VERSION-json php-yaml php-xdebug 
+
 RUN echo '[XDebug]\n\
 xdebug.remote_enable = 1\n\
 xdebug.remote_autostart = 1' >> /etc/php/$PHP_VERSION/mods-available/xdebug.ini
@@ -264,33 +248,55 @@ RUN curl -s -o composer-setup.php https://getcomposer.org/installer \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && rm composer-setup.php
 
+
+# Python 3
+RUN apt-get update -y \
+    && apt-get install -y software-properties-common \
+    && add-apt-repository universe \
+    && apt-get install -y python3.8 python3-dev python3-pip \
+    && python3.8 -m pip install --upgrade pip --user \
+    && pip3 install python-language-server flake8 autopep8 \
+    && apt install snapd -y 
+
+# # Kotlin
+# RUN snap install --classic kotlin
+
 # Ruby
-RUN apt-get update && apt-get -y install ruby ruby-dev zlib1g-dev && \
+RUN apt-get update && apt-get -y install fonts-firacode ruby ruby-dev zlib1g-dev && \
     gem install solargraph
 
+# # Swift
+# ARG SWIFT_VERSION=5.2.4
+
+# RUN apt-get update \
+#     && apt-get install -y binutils libc6-dev libcurl4 libedit2 libgcc-5-dev libpython2.7 libsqlite3-0 libstdc++-5-dev libxml2 pkg-config tzdata zlib1g-dev \
+#     && curl -SLO https://swift.org/builds/swift-$SWIFT_VERSION-release/ubuntu1804/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz \
+#     && curl -SLO https://swift.org/builds/swift-$SWIFT_VERSION-release/ubuntu1804/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
+#     && wget -q -O - https://swift.org/keys/all-keys.asc | gpg --import - \
+#     && (    gpg --keyserver pool.sks-keyservers.net --refresh-keys Swift \
+#          || gpg --keyserver ipv4.pool.sks-keyservers.net --refresh-keys Swift \
+#          || gpg --keyserver pool.sks-keyservers.net --refresh-keys Swift \
+#          || gpg --keyserver pgp.mit.edu --refresh-keys Swift \
+#          || gpg --keyserver keyserver.pgp.com --refresh-keys Swift \
+#          || gpg --keyserver ha.pool.sks-keyservers.net --refresh-keys Swift \
+#        ) \
+#     && gpg --verify swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
+#     && tar fxz swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz \
+#     && rm swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
+#     && mv swift-$SWIFT_VERSION-RELEASE-ubuntu18.04 /usr/local/swift \
+#     && ln -s /usr/local/swift/usr/bin/swift* /usr/bin \
+#     && ln -s /usr/local/swift/usr/bin/lldb* /usr/bin \
+#     && ln -s /usr/local/swift/usr/bin/sourcekit-lsp /usr/bin
+
 # Swift
-ARG SWIFT_VERSION=5.2.4
 
-RUN apt-get update \
-    && apt-get install -y fish fonts-firacode binutils libc6-dev libcurl4 libedit2 libgcc-5-dev libpython2.7 libsqlite3-0 libstdc++-5-dev libxml2 pkg-config tzdata zlib1g-dev \
-    && curl -SLO https://swift.org/builds/swift-$SWIFT_VERSION-release/ubuntu1804/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz \
-    && curl -SLO https://swift.org/builds/swift-$SWIFT_VERSION-release/ubuntu1804/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
-    && wget -q -O - https://swift.org/keys/all-keys.asc | gpg --import - \
-    && (    gpg --keyserver pool.sks-keyservers.net --refresh-keys Swift \
-         || gpg --keyserver ipv4.pool.sks-keyservers.net --refresh-keys Swift \
-         || gpg --keyserver pool.sks-keyservers.net --refresh-keys Swift \
-         || gpg --keyserver pgp.mit.edu --refresh-keys Swift \
-         || gpg --keyserver keyserver.pgp.com --refresh-keys Swift \
-         || gpg --keyserver ha.pool.sks-keyservers.net --refresh-keys Swift \
-       ) \
-    && gpg --verify swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
-    && tar fxz swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz \
-    && rm swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz swift-$SWIFT_VERSION-RELEASE-ubuntu18.04.tar.gz.sig \
-    && mv swift-$SWIFT_VERSION-RELEASE-ubuntu18.04 /usr/local/swift \
-    && ln -s /usr/local/swift/usr/bin/swift* /usr/bin \
-    && ln -s /usr/local/swift/usr/bin/lldb* /usr/bin \
-    && ln -s /usr/local/swift/usr/bin/sourcekit-lsp /usr/bin
-
+# RUN \
+#   apt install -y clang libpython2.7 libpython2.7-dev && \
+#   wget https://swift.org/builds/swift-5.3-release/ubuntu2004/swift-5.3-RELEASE/swift-5.3-RELEASE-ubuntu20.04.tar.gz && \ 
+#   tar xzf swift-5.3-RELEASE-ubunutu20.04.tar.gz && \
+#   mv swift-5.3-RELEASE-ubunutu20.04 /usr/share swift && \
+#   echo "export PATH=/usr/share/swift/usr/bin:$PATH" >> ~/.bashrc 
+  
 # Dart
 ENV DART_VERSION 2.9.0
 
@@ -301,7 +307,8 @@ RUN \
   curl https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_testing.list > /etc/apt/sources.list.d/dart_testing.list && \
   curl https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_unstable.list > /etc/apt/sources.list.d/dart_unstable.list && \
   apt-get update && \
-  apt-get install dart=$DART_VERSION-1
+  apt-get install dart=$DART_VERSION-1 \
+  && apt-get remove -y software-properties-common 
 
 ENV DART_SDK /usr/lib/dart
 ENV PATH $DART_SDK/bin:/theia/.pub-cache/bin:$PATH
@@ -334,9 +341,10 @@ RUN apt-get clean && \
 RUN chmod +x ./plugins/yangster/extension/server/bin/yang-language-server
 
 USER theia
-EXPOSE 11611
+EXPOSE $PORT
+EXPOSE 3000
 # Configure Theia
-ENV SHELL=/bin/fish \
+ENV SHELL=/usr/bin/fish \
     THEIA_DEFAULT_PLUGINS=local-dir:/home/theia/plugins  \
     # Configure user Go path
     GOPATH=/home/project
@@ -344,4 +352,6 @@ ENV SHELL=/bin/fish \
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-ENTRYPOINT [ "node", "/home/theia/src-gen/backend/main.js", "/home/project", "--hostname=0.0.0.0","--port=11611" ]
+
+ENTRYPOINT [ "node", "/home/theia/src-gen/backend/main.js", "/home/project", "--hostname=0.0.0.0"]
+
